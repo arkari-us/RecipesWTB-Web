@@ -1,6 +1,41 @@
 import React from 'react';
 
+class RecipeList extends React.Component {
+  render(props) {
+    return (
+      <ul>
+        {this.props.recipes.map(recipe => {
+          return (
+            <li onClick={() => this.props.changeRecipe(recipe)} key={recipe.id}>{recipe.name}</li>
+          );
+        })}
+      </ul>
+    )
+  }
+}
+
+class RecipeDisplay extends React.Component {
+  render(props) {
+    return (
+      <div>
+        <h4>{this.props.recipe.name || 'No recipe selected'}</h4>
+        <ul>
+          {this.props.recipe.ingredients.map(
+            ingredient => <li>{ingredient.quantity} {ingredient.unit} {ingredient.ingredient}</li>
+          )}
+        </ul>
+      </div>
+    )
+  }
+}
+
 class App extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.changeRecipe = this.changeRecipe.bind(this);
+  }
+
   state = {
     recipes: [
       {
@@ -33,28 +68,15 @@ class App extends React.Component {
     }
   }
 
-  swap = (recipe) => {
+  changeRecipe = (recipe) => {
     this.setState({currentRecipe: recipe});
   }
 
   render() {
     return (
       <>
-        <ul>
-          {this.state.recipes.map(recipe => {
-            return (
-              <li onClick={() => this.swap(recipe)}>{recipe.name}</li>
-            );
-          })}
-        </ul>
-        <div>
-          <h4>{this.state.currentRecipe.name || 'No recipe selected'}</h4>
-          <ul>
-          {this.state.currentRecipe.ingredients.map(
-            ingredient => <li>{ingredient.quantity} {ingredient.unit} {ingredient.ingredient}</li>
-          )}
-          </ul>
-        </div>
+        <RecipeList changeRecipe={this.changeRecipe} recipes={this.state.recipes} />
+        <RecipeDisplay recipe={this.state.currentRecipe} />
       </>
     );
   }
